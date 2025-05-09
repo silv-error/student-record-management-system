@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script>
+        <title>Login</title>
+        <style>
+            body {
+                position: relative;
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+            body::before {
+                content: "";
+                background-image: url('bg_login.jpg');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: -1;
+                filter: blur(2px) brightness(0.4);
+                -webkit-filter: blur(2px) brightness(0.4);
+            }
+            .form-container {
+                background-color: #102E50;
+                backdrop-filter: blur(4px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .form-title {
+                color: white;
+                font-size: 1.8rem;
+                font-weight: 600;
+                margin-bottom: 1.5rem;
+                text-align: center;
+                position: relative;
+            }
+            .form-title:after {
+                content: "";
+                display: block;
+                width: 60px;
+                height: 3px;
+                background: #3b82f6;
+                margin: 10px auto 0;
+            }
+            .form-input {
+                background-color: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: white;
+                transition: all 0.3s ease;
+            }
+            .form-input:focus {
+                background-color: rgba(255, 255, 255, 0.1);
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            }
+            .form-input::placeholder {
+                color: rgba(255, 255, 255, 0.5);
+            }
+            .togglePassword {
+                background-color: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-left: none;
+                color: rgba(255, 255, 255, 0.7);
+            }
+            .logo-login {
+                height: 80px;
+        
+            }
+            .form-link {
+                color: #93c5fd;
+                font-size: 0.875rem;
+            }
+            .form-link:hover {
+                color: #bfdbfe;
+            }
+        </style>
+    </head>
+    <body class="min-h-screen flex flex-col">
+        <!-- Header with logo -->
+        <header class="w-full bg-white shadow-sm">
+            <div class="">
+                <img src="logo.png" alt="Company Logo" class="logo-login">
+            </div>
+        </header>
+
+        <!-- Main content with login form -->
+        <main class="flex-grow flex items-center justify-center p-4">
+            <div class="w-full max-w-md mx-4">
+                <div class="form-container rounded-2xl shadow-xl p-8 sm:p-10">
+                    <div>
+                        <h1 class="form-title">Login</h1>
+
+                        <!-- Login Form -->
+                        <form action="" method="POST" class="space-y-5">
+                            <div>
+                                <input type="email" id="email" name="email" class="form-input w-full px-4 py-3 rounded-lg" placeholder="Email Address" required>
+                            </div>
+
+                            <div>
+                                <label for="password" class="block text-white/80 text-sm font-medium mb-2">Password</label>
+                                <div class="flex">
+                                    <input type="password" id="password" name="password" class="form-input w-full px-4 py-3 rounded-l-lg" placeholder="••••••••" required>
+                                    <button type="button" class="togglePassword rounded-r-lg px-4 flex items-center">
+                                        <i data-feather="eye" class="cursor-pointer"></i>
+                                    </button>
+                                </div>
+                                <div class="text-right mt-2">
+                                    <a href="#ForDemo" class="form-link">Forgot password?</a>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg">
+                                Log In
+                            </button>
+                        </form>
+
+                        <div class="text-center mt-6">
+                            <p class="text-white/70 text-sm">Don't have an account? <a href="register.html" class="form-link font-medium">Sign Up</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script>
+            $(document).ready(function () {
+                feather.replace();
+
+                $('.togglePassword').on('click', function () {
+                    const button = $(this);
+                    const input = button.siblings('input');
+                    const type = input.attr('type') === 'password' ? 'text' : 'password';
+                    input.attr('type', type);
+
+                    // Change the icon
+                    const icon = button.find('i');
+                    icon.attr('data-feather', type === 'password' ? 'eye' : 'eye-off');
+                    feather.replace();
+                });
+            });
+        </script>
+    </body>
+</html>
