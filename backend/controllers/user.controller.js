@@ -42,9 +42,9 @@ export const editProfile = async (req, res) => {
 
     if(profileImg) {
       if(user.profileImg) {
-        await cloudinary.uploader.destroy(user.profileImg.slice("/").pop().slice(".")[0]);
+        await cloudinary.uploader.destroy(user.profileImg.split("/").pop().slice(".")[0]);
       }
-      let profileImg = (await cloudinary.uploader.upload(profileImg)).secure_url;
+      profileImg = (await cloudinary.uploader.upload(profileImg)).secure_url;
     }
 
     if(email) {
@@ -85,6 +85,7 @@ export const editProfile = async (req, res) => {
     await user.save();
     res.status(200).json({ 
       success: true,
+      message: "Profile updated successfully",
       user: {
         ...user._doc,
         password: undefined,
@@ -104,6 +105,10 @@ export const changePassword = async (req, res) => {
 
     if(!oldPassword || !newPassword || !confirmPassword) {
       return res.status(404).json({ success: false, error: "All fields are required" });
+    }
+
+    if(newPassword.length < 8) {
+      return res.status(400).json({ success: false, error: "Password must be at least 8 characters length" });
     }
 
     const validPassword = await user.comparePassword(oldPassword);

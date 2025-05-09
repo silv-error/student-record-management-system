@@ -1,0 +1,88 @@
+.myBg {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.myBg::before {
+  content: "";
+  background-image: url('/bg_login.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  filter: blur(2px) brightness(0.4);
+  -webkit-filter: blur(2px) brightness(0.4);
+}
+.formContainer {
+  background-color: #102E50;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.formTitle {
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  position: relative;
+}
+.formTitle:after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: #3b82f6;
+  margin: 10px auto 0;
+}
+.formInput {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  transition: all 0.3s ease;
+}
+.formInput:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+.formInput::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+.togglePassword {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: none;
+  color: rgba(255, 255, 255, 0.7);
+}
+.logoLogin {
+  height: 80px;
+}
+select.formInput {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+/* Custom dropdown options styling */
+select option {
+  background-color: #102E50;
+  color: white;
+}
+select:invalid {
+  color: rgba(255, 255, 255, 0.5);
+}
+select option:checked {
+  background-color: #3b82f6;
+  color: white;
+}
+select option:hover {
+  background-color: #1e40af;
+}
