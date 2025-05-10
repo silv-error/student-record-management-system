@@ -12,7 +12,7 @@ export const getCourses = async (req, res) => {
       ]
     }).populate({ path: "students.student", select: "-password"}).lean();
 
-    if(!courses) {
+    if(!courses.length) {
       return res.status(404).json({ success: false, error: "No courses found" });
     }
 
@@ -39,7 +39,7 @@ export const getEnrolledStudents = async (req, res) => {
     const { id } = req.params;
     const course = await Course.findById(id).populate({
       path: "students.student", select: "-password"
-    }).lean();
+    }).select("-students.grade").lean();
     if(!course) {
       return res.status(404).json({ success: false, error: "Course not found" });
     }
@@ -52,9 +52,10 @@ export const getEnrolledStudents = async (req, res) => {
 
 export const createCourse = async (req, res) => {
   try {
-    const { code, title, units, room, day, startTime, endTime, status } = req.body;
+    // todo: add semester input
+    const { code, title, units, semester, yearLevel, room, day, startTime, endTime, status } = req.body;
     
-    if(!code || !title || !units || !room || !day || !startTime || !endTime || !status) {
+    if(!code || !title || !units || !semester || !yearLevel || !room || !day || !startTime || !endTime || !status) {
       return res.status(400).json({ success: false, error: "All fields are required" });
     }
 
@@ -62,6 +63,8 @@ export const createCourse = async (req, res) => {
       code,
       title,
       units,
+      semester,
+      yearLevel,
       room,
       day,
       startTime,

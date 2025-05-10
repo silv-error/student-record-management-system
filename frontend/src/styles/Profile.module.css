@@ -1,0 +1,114 @@
+.myBg {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.myBg::before {
+  content: "";
+  background-color: gray;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  filter: blur(2px) brightness(0.4);
+  -webkit-filter: blur(2px) brightness(0.4);
+}
+.formContainer {
+  background-color: #102E50;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.profilePic {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border: 3px solid #3b82f6;
+  margin-top: 20px;
+}
+.navButton {
+  transition: all 0.3s ease;
+}
+.navButton:hover {
+  background-color: rgba(59, 130, 246, 0.2);
+}
+.navButton.active {
+  background-color: rgba(59, 130, 246, 0.3);
+  border-left: 3px solid #3b82f6;
+}
+.infoCard {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.coverImageContainer {
+  position: relative;
+  background-image: url("/bg_login.jpg");
+}
+.coverImageContainer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.profileSection {
+  display: block;
+}
+.hiddenSection {
+  display: none;
+}
+.profilePicc {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border: 3px solid #3b82f6;
+}
+.editBtn{
+margin-right: 550px;
+}
+.profBtn{
+margin-left: 600px;
+}
+.profconte{
+margin-top: -36px;
+}
+.persosec{
+margin-top: 37px;
+}
+.viewMode{
+width: 80%;
+padding-left: 120px;
+padding-top: 20px;
+padding-bottom: 20px;
+margin-top: 20px;
+}
+.activeUnderline {
+  border-bottom: 2px solid #3b82f6;
+  padding-bottom: 16px;
+
+}
+.proftitl{
+margin-left: 50px;
+padding-bottom: 42px;
+margin-top: 20px;
+}
+.cheese{
+margin-top:10px;
+}
+.logoLogin{
+margin-right: 100px;
+}
+.logout{
+margin-left: 1500px;
+}
+
+#editText{
+margin-left: 60px;
+}

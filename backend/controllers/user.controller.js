@@ -29,6 +29,7 @@ export const editProfile = async (req, res) => {
       email, 
       contactNumber, 
       course,
+      yearLevel,
       gender, 
       dateOfBirth,
       street,
@@ -42,9 +43,9 @@ export const editProfile = async (req, res) => {
 
     if(profileImg) {
       if(user.profileImg) {
-        await cloudinary.uploader.destroy(user.profileImg.slice("/").pop().slice(".")[0]);
+        await cloudinary.uploader.destroy(user.profileImg.split("/").pop().slice(".")[0]);
       }
-      let profileImg = (await cloudinary.uploader.upload(profileImg)).secure_url;
+      profileImg = (await cloudinary.uploader.upload(profileImg)).secure_url;
     }
 
     if(email) {
@@ -72,6 +73,7 @@ export const editProfile = async (req, res) => {
     user.email = email || user.email;
     user.contactNumber = contactNumber || user.contactNumber;
     user.course = course || user.course;
+    user.yearLevel = yearLevel || user.yearLevel;
     user.gender = gender || user.gender;
     user.dateOfBirth = dateOfBirth || user.dateOfBirth;
     user.address.street = street || user.address.street;
@@ -85,6 +87,7 @@ export const editProfile = async (req, res) => {
     await user.save();
     res.status(200).json({ 
       success: true,
+      message: "Profile updated successfully",
       user: {
         ...user._doc,
         password: undefined,
@@ -110,6 +113,11 @@ export const changePassword = async (req, res) => {
     if(!validPassword) {
       return res.status(404).json({ success: false, error: "Old password is incorrect" });
     }
+    
+    if(newPassword.length < 8) {
+      return res.status(400).json({ success: false, error: "Password must be at least 8 characters length" });
+    }
+
 
     if(newPassword !== confirmPassword) {
       return res.status(404).json({ success: false, error: "Password do not match" });

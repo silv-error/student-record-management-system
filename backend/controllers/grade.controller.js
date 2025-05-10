@@ -26,3 +26,29 @@ export const editStudentGrade = async (req, res) => {
     res.status(500).json({ success: false, error: "Internal server error" });
   }
 }
+
+export const getStudentGrades = async (req, res) => {
+  try {
+    const user = req.user;
+    let course = await Course.find({ students: { $elemMatch: { student: user._id } }}).populate({
+      path: "students.student", 
+      select: "-password" 
+    }).populate({ path: "professor", select: "-password"}).lean();
+    if(!course) {
+      return res.status(404).json({ success: false, error: "Course not found" });
+    }
+
+    const courses = course.map(course => {
+      const filteredStudents = course.students.filter(student => 
+        student.student && student.student._id.toString() === user._id.toString()
+      );
+      course.students = filteredStudents;
+      return course;
+  });
+
+    res.status(200).json({ success: true, courses });
+  } catch (error) {
+    console.error(`Error in getStudentGrade: ${error.message}`);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+}

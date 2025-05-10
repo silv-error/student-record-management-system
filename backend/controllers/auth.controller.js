@@ -12,7 +12,6 @@ export const signup = async (req, res) => {
       confirmPassword,
       contactNumber,
       course,
-      yearLevel,
       street,
       city,
       province,
@@ -22,7 +21,7 @@ export const signup = async (req, res) => {
       gender,
     } = req.body;
 
-    if(!firstName || !lastName || !email || !password || !confirmPassword || !contactNumber || !course || !yearLevel || !street || !city || !province || !postalCode || !country || !dateOfBirth || !gender) {
+    if(!firstName || !middleName || !lastName || !email || !password || !confirmPassword || !contactNumber || !course || !street || !city || !province || !postalCode || !country || !dateOfBirth || !gender) {
       return res.status(400).json({ success: false, error: "All fields are required" });
     }
 
@@ -41,6 +40,10 @@ export const signup = async (req, res) => {
       return res.status(400).json({ success: false, error: "Invalid contact number format" });
     }
 
+    if(password.length < 8) {
+      return res.status(400).json({ success: false, error: "Password must be at least 8 characters length"});
+    }
+
     if(password !== confirmPassword) {
       return res.status(400).json({ success: false, error: "Passwords do not match" });
     }
@@ -50,10 +53,10 @@ export const signup = async (req, res) => {
       lastName, 
       middleName, 
       email, 
-      password, 
+      password,
+      confirmPassword,
       contactNumber,
       course,
-      yearLevel,
       address: {
         street,
         city,
