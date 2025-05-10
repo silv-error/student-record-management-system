@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// todo: add semester data
 const courseSchema = new mongoose.Schema({
   code: {
     type: String,
@@ -11,6 +12,14 @@ const courseSchema = new mongoose.Schema({
   },
   units: {
     type: Number,
+    required: true,
+  },
+  semester: {
+    type: String,
+    required: true,
+  },
+  yearLevel: {
+    type: String,
     required: true,
   },
   room: {

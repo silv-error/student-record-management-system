@@ -17,7 +17,7 @@ const LoginPage = () => {
     password: "",
   });
 
-  const {mutate, isPending, error} = useMutation({
+  const {mutate, isPending} = useMutation({
     mutationKey: ["login"],
     mutationFn: async () => {
       try {
@@ -130,7 +130,11 @@ const LoginPage = () => {
                 <button 
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg"
                 >
-                  {isPending ? <LoadingSpinner size={"20"} /> : "Log In"}
+                  {isPending ? (
+                    <div className='flex items-center justify-center'>
+                      <LoadingSpinner size={"20"} />
+                    </div>
+                  ) : "Log In"}
                 </button>
               </form>
 

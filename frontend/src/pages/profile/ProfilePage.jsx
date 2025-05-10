@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import EditProfile from './EditProfile'
 import styles from "../../styles/Profile.module.css"
 import { useState } from 'react'
@@ -6,16 +6,18 @@ import { useAuthContext } from '../../context/authContext'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import useUpdateProfile from '../hooks/useUpdateProfile'
 import { formattedBirthDate } from '../utils/date'
+import { Pencil } from 'lucide-react'
+import { useParams } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 
 const ProfilePage = () => {
 
-  const {authUser} = useAuthContext();
   const [editMode, setEditMode] = useState(true);
   
-  const [profileImg, setProfileImg] = useState("");
+  const [profileImg, setProfileImg] = useState(null);
   const imgRef = useRef(null);
   const {mutateAsync, isPending} = useUpdateProfile();
-
+  
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -24,11 +26,18 @@ const ProfilePage = () => {
         const newProfileImg = reader.result;
         setProfileImg(newProfileImg);
         await mutateAsync({ profileImg: newProfileImg });
+        setProfileImg(null);
       };
       reader.readAsDataURL(file);
     }
   };
-
+  
+  useEffect(() => {
+    return () => {
+      setEditMode(false);
+    }
+  }, []);
+  
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -42,17 +51,45 @@ const ProfilePage = () => {
     city: "",
     postalCode: "",
     country: "",
+    course: "",
+    yearLevel: "",
   });
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
     await mutateAsync(formData);
   }
 
   const handleOnChange = (e) => {
     e.preventDefault();
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  }
+
+  const { id } = useParams();
+  const {data:authUser, isLoading} = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      try {
+        const res = await fetch(`/api/users/profile/${id}`);
+        const data = await res.json();
+
+        if(!res.ok) {
+          throw new Error(data.error || "Something went wrong");
+        }
+
+        return data.user;
+      } catch (error) {
+        throw new Error(error);
+      }
+    }
+  });
+
+  if(isLoading) {
+    return (
+      <div className='h-full flex justify-center items-center'>
+        <LoadingSpinner size={50}/>
+      </div>
+    )
   }
 
   return (
@@ -65,15 +102,23 @@ const ProfilePage = () => {
           <div className={`w-full relative ${styles.coverImageContainer} bg-cover bg-no-repeat bg-center h-[480px]`}>
             {/* <!-- Profile Picture centered on cover --> */}
             <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-10">
-              <img 
-                src={profileImg || authUser.profileImg || "https://avatar.iran.liara.run/public/30"}
-                alt="Profile Picture"
-                onClick={() => imgRef.current.click()}
-                className={`border-4 border-white ${styles.profilePicc} rounded-full object-cover size-40 bg-gray-900 hover:opacity-85`} 
-              />
+              <div className='relative group'>
+                <div 
+                  className='absolute w-full h-full rounded-full bg-black opacity-0 group-hover:opacity-35'
+                  onClick={() => imgRef.current.click()}
+                />
+                <img 
+                  src={profileImg || authUser?.profileImg || "https://avatar.iran.liara.run/public/30"}
+                  alt="Profile Picture"
+                  className={`border-4 border-white ${styles.profilePicc} rounded-full object-cover size-40 bg-gray-900`} 
+                />
+                <Pencil size={30} className='absolute hidden group-hover:block top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-white'/>
+              </div>
+              
               <input ref={imgRef} type='file' accept='image/*' onChange={handleImageChange} hidden/>
-              <h2 className="text-white text-2xl font-bold mt-2 mb-2 text-center">{authUser.firstName} {authUser.middleName} {authUser.lastName} </h2>
-              <p className="text-blue-300 mb-10 text-center">{authUser.course} - {authUser.yearLevel}</p>
+              <h2 className="text-white text-2xl font-bold mt-2 mb-2 text-center">{authUser?.firstName} {authUser?.middleName} {authUser?.lastName} </h2>
+              <p className='font-medium text-yellow-500'>{authUser?.role} </p>
+              <p className="text-blue-300 mb-10 text-center">{authUser?.course}</p>
             </div>
           </div>
           {/* <!-- Personal Information Section with Edit --> */}
@@ -130,7 +175,7 @@ const ProfilePage = () => {
                       </svg>
                       <div>
                         <p className="text-gray-500 text-sm">Gender</p>
-                        <p className="text-gray-800 text-lg">{authUser.gender}</p>
+                        <p className="text-gray-800 text-lg">{authUser?.gender}</p>
                       </div>
                     </div>
 
@@ -140,7 +185,7 @@ const ProfilePage = () => {
                       </svg>
                       <div>
                         <p className="text-gray-500 text-sm">Date of Birth</p>
-                        <p className="text-gray-800 text-lg">{formattedBirthDate(authUser.dateOfBirth)} </p>
+                        <p className="text-gray-800 text-lg">{formattedBirthDate(authUser?.dateOfBirth)} </p>
                       </div>
                     </div>
 
@@ -150,7 +195,7 @@ const ProfilePage = () => {
                       </svg>
                       <div>
                         <p className="text-gray-500 text-sm">Email</p>
-                        <p className="text-gray-800 text-lg">{authUser.email}</p>
+                        <p className="text-gray-800 text-lg">{authUser?.email}</p>
                       </div>
                     </div>
                   </div>
@@ -162,7 +207,7 @@ const ProfilePage = () => {
                       </svg>
                       <div>
                         <p className="text-gray-500 text-sm">Student ID</p>
-                        <p className="text-gray-800 text-lg">{authUser._id}</p>
+                        <p className="text-gray-800 text-lg">{authUser?._id}</p>
                       </div>
                     </div>
 
@@ -172,7 +217,7 @@ const ProfilePage = () => {
                       </svg>
                       <div>
                         <p className="text-gray-500 text-sm">Phone</p>
-                        <p className="text-gray-800 text-lg">{authUser.contactNumber}</p>
+                        <p className="text-gray-800 text-lg">{authUser?.contactNumber}</p>
                       </div>
                     </div>
 
@@ -183,7 +228,7 @@ const ProfilePage = () => {
                       </svg>
                       <div>
                         <p className="text-gray-500 text-sm">Address</p>
-                        <p className="text-gray-800 text-lg">{authUser.address.country}</p>
+                        <p className="text-gray-800 text-lg">{authUser?.address?.country}</p>
                       </div>
                     </div>
                   </div>

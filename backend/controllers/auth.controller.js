@@ -12,7 +12,6 @@ export const signup = async (req, res) => {
       confirmPassword,
       contactNumber,
       course,
-      yearLevel,
       street,
       city,
       province,
@@ -22,7 +21,7 @@ export const signup = async (req, res) => {
       gender,
     } = req.body;
 
-    if(!firstName || !middleName || !lastName || !email || !password || !confirmPassword || !contactNumber || !course || !yearLevel || !street || !city || !province || !postalCode || !country || !dateOfBirth || !gender) {
+    if(!firstName || !middleName || !lastName || !email || !password || !confirmPassword || !contactNumber || !course || !street || !city || !province || !postalCode || !country || !dateOfBirth || !gender) {
       return res.status(400).json({ success: false, error: "All fields are required" });
     }
 
@@ -58,7 +57,6 @@ export const signup = async (req, res) => {
       confirmPassword,
       contactNumber,
       course,
-      yearLevel,
       address: {
         street,
         city,

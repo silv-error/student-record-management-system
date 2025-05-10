@@ -36,8 +36,17 @@ export const formattedBirthDate = (createdAt) => {
 		"November",
 		"December",
 	];
-  const day = date.getDay();
+  const day = date.getDate();
 	const month = months[date.getMonth()];
 	const year = date.getFullYear();
 	return `${month} ${day}, ${year}`;
 };
+
+export const formattedTime = (time) => {
+
+	const date = new Date(time);
+	const hour = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+	const minute = date.getMinutes();
+	const amOrPm = date.getHours() >= 12 ? "PM" : "AM";
+	return hour.toString().padStart(2, "0") + ":" + minute.toString().padStart(2, "0") + " " + amOrPm;
+}

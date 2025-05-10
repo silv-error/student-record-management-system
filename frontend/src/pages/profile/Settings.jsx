@@ -77,7 +77,6 @@ const Settings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
     await changePassword();
     setFormData({
       oldPassword: "",
@@ -198,7 +197,11 @@ const Settings = () => {
                 onClick={() => logout()}
                 className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg"
               >
-                {isPendingLogout ? <LoadingSpinner size={20}/> : "Logout"}
+                {isPendingLogout ? (
+                  <div className='flex items-center justify-center'>
+                    <LoadingSpinner size={20}/>
+                  </div>
+                ) : "Logout"}
               </button>
             </div>
           </div>

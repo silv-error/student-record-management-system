@@ -29,6 +29,7 @@ export const editProfile = async (req, res) => {
       email, 
       contactNumber, 
       course,
+      yearLevel,
       gender, 
       dateOfBirth,
       street,
@@ -72,6 +73,7 @@ export const editProfile = async (req, res) => {
     user.email = email || user.email;
     user.contactNumber = contactNumber || user.contactNumber;
     user.course = course || user.course;
+    user.yearLevel = yearLevel || user.yearLevel;
     user.gender = gender || user.gender;
     user.dateOfBirth = dateOfBirth || user.dateOfBirth;
     user.address.street = street || user.address.street;
@@ -107,14 +109,15 @@ export const changePassword = async (req, res) => {
       return res.status(404).json({ success: false, error: "All fields are required" });
     }
 
-    if(newPassword.length < 8) {
-      return res.status(400).json({ success: false, error: "Password must be at least 8 characters length" });
-    }
-
     const validPassword = await user.comparePassword(oldPassword);
     if(!validPassword) {
       return res.status(404).json({ success: false, error: "Old password is incorrect" });
     }
+    
+    if(newPassword.length < 8) {
+      return res.status(400).json({ success: false, error: "Password must be at least 8 characters length" });
+    }
+
 
     if(newPassword !== confirmPassword) {
       return res.status(404).json({ success: false, error: "Password do not match" });
