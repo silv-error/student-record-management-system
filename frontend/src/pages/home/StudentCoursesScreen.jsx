@@ -101,6 +101,7 @@ const StudentCoursesScreen = () => {
                     </td>
                   </tr>
                 )}
+                
               </tbody>
             </table>
           </div>
