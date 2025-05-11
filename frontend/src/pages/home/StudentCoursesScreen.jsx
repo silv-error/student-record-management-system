@@ -94,7 +94,7 @@ const StudentCoursesScreen = () => {
                     </td>
                   </tr>
                 )}
-                {(!filteredCourses?.length && data?.length) && (
+                {(!filteredCourses?.length && data?.length > 0) && (
                   <tr>
                     <td colSpan={10} className='text-center font-medium text-gray-700 p-10'>
                       No subjects in this semester.
