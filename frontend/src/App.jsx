@@ -5,8 +5,8 @@ import { Toaster } from "react-hot-toast"
 import LoginPage from "./pages/auth/login/LoginPage.jsx"
 import SignUpPage from "./pages/auth/signup/SignUpPage.jsx"
 import ProfilePage from "./pages/profile/ProfilePage.jsx"
-import Settings from "./pages/profile/Settings.jsx"
-import CoursePage from "./pages/profile/CoursePage.jsx"
+import Settings from "./pages/settings/Settings.jsx"
+import HomePage from "./pages/home/HomePage.jsx"
 
 import styles from "./styles/Profile.module.css"
 import LeftSideBar from "./components/common/LeftSideBar.jsx"
@@ -28,9 +28,9 @@ function App() {
         )}
         {/* Main content */}
         <div className={`${authUser && "flex flex-grow w-full flex-col md:flex-row m-0 p-0"}`}>
-        {authUser && <LeftSideBar />}
+        {authUser && <LeftSideBar/>}
           <Routes>
-            <Route path="/" element={authUser ? <CoursePage /> : <Navigate to={"/login"} />} />
+            <Route path="/" element={authUser ? <HomePage /> : <Navigate to={"/login"} />} />
             <Route path="/profile/:id" element={authUser ? <ProfilePage /> : <Navigate to={"/login"} />} />
             <Route path="/settings" element={authUser ? <Settings /> : <Navigate to={"/login"} />} />
             <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to={"/"} />} />

@@ -1,5 +1,5 @@
 import express from "express";
-import { instructorRoute } from "../middleware/accessRoute.js";
+import { instructorRoute, studentRoute } from "../middleware/accessRoute.js";
 import { 
   createCourse, 
   deleteCourse, 
@@ -7,13 +7,15 @@ import {
   enrollStudent, 
   getCourses, 
   getEnrolledStudents, 
+  getEnrolledStudentsPov, 
   unenrollStudent 
 } from "../controllers/course.controller.js";
 
 const router = express.Router();
 
 router.get("/", getCourses);
-router.get("/:id/enrolled", getEnrolledStudents);
+router.get("/:id/enrolled", instructorRoute, getEnrolledStudents);
+router.get("/:id/classmates", studentRoute, getEnrolledStudentsPov);
 
 router.post("/create", instructorRoute, createCourse);
 router.delete("/:id", instructorRoute, deleteCourse);

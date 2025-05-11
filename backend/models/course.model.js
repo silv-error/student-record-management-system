@@ -39,10 +39,6 @@ const courseSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  status: {
-    type: String,
-    default: "Ongoing"
-  },
   professor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

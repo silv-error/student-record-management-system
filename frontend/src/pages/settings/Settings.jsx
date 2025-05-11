@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styles from "../../styles/Profile.module.css"
 import { Eye, EyeClosed } from 'lucide-react'
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthContext } from '../../context/authContext';
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../../components/LoadingSpinner';

@@ -1,9 +1,10 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { useAuthContext } from '../../context/authContext';
+import { useAuthContext } from '../context/authContext';
 
 const useUpdateProfile = () => {
   const {setAuthUser} = useAuthContext();
+  const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMutation({
     mutationKey: ["profileImg"],
     mutationFn: async (formData) => {
@@ -29,6 +30,7 @@ const useUpdateProfile = () => {
       }
     },
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["profile"]})
       toast.success(data.message);
     },
     onError: (error) => {

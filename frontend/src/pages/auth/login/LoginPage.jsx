@@ -3,7 +3,7 @@ import { Eye, EyeClosed } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import styles from '../../../styles/Login.module.css'
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthContext } from '../../../context/authContext';
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../../../components/LoadingSpinner';

@@ -50,3 +50,11 @@ export const formattedTime = (time) => {
 	const amOrPm = date.getHours() >= 12 ? "PM" : "AM";
 	return hour.toString().padStart(2, "0") + ":" + minute.toString().padStart(2, "0") + " " + amOrPm;
 }
+
+export const formattedTime1 = (time) => {
+
+	const date = new Date(time);
+	const hour = date.getHours();
+	const minute = date.getMinutes();
+	return hour.toString().padStart(2, "0") + ":" + minute.toString().padStart(2, "0");
+}
