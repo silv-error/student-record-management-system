@@ -1,6 +1,15 @@
 import User from "../models/user.model.js";
 import cloudinary from "../config/cloudinary.js";
 
+export const getStudents = async (req, res) => {
+  try {
+    const users = await User.find({ role: "Student" }).select("-password").lean();
+    res.status(200).json({ success: true, users });
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 export const getUserProfile = async (req, res) => {
   try {
     const { id } = req.params;

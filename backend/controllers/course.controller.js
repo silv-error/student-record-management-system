@@ -4,7 +4,6 @@ import User from "../models/user.model.js";
 export const getCourses = async (req, res) => {
   try {
     const user = req.user;
-
     const courses = await Course.find({
       $or: [
         { professor: user._id },
@@ -12,8 +11,8 @@ export const getCourses = async (req, res) => {
       ]
     }).populate({ path: "students.student", select: "-password"}).lean();
 
-    if(!courses.length) {
-      return res.status(404).json({ success: false, error: "No courses found" });
+    if(!courses.length || !courses) {
+      return res.status(200).json([]);
     }
 
     res.status(200).json({ success: true, courses})
@@ -37,6 +36,26 @@ export const deleteCourse = async (req, res) => {
 export const getEnrolledStudents = async (req, res) => {
   try {
     const { id } = req.params;
+    if(!id) {
+      return res.status(200).json([]);
+    }
+    const course = await Course.findById(id).populate({
+      path: "students.student", select: "-password"
+    }).lean();
+    if(!course) {
+      return res.status(404).json({ success: false, error: "Course not found" });
+    }
+
+    res.status(200).json(course.students)
+  } catch (error) {
+    console.error(`Error in getEnrolledStudents: ${error.message}`);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+}
+
+export const getEnrolledStudentsPov = async (req, res) => {
+  try {
+    const { id } = req.params;
     const course = await Course.findById(id).populate({
       path: "students.student", select: "-password"
     }).select("-students.grade").lean();
@@ -45,7 +64,7 @@ export const getEnrolledStudents = async (req, res) => {
     }
     res.status(200).json(course.students)
   } catch (error) {
-    console.error(`Error in getEnrolledStudents: ${error.message}`);
+    console.error(`Error in getEnrolledStudentsPov: ${error.message}`);
     res.status(500).json({ success: false, error: "Internal server error" });
   }
 }
@@ -53,9 +72,9 @@ export const getEnrolledStudents = async (req, res) => {
 export const createCourse = async (req, res) => {
   try {
     // todo: add semester input
-    const { code, title, units, semester, yearLevel, room, day, startTime, endTime, status } = req.body;
+    const { code, title, units, semester, yearLevel, room, day, startTime, endTime } = req.body;
     
-    if(!code || !title || !units || !semester || !yearLevel || !room || !day || !startTime || !endTime || !status) {
+    if(!code || !title || !units || !semester || !yearLevel || !room || !day || !startTime || !endTime ) {
       return res.status(400).json({ success: false, error: "All fields are required" });
     }
 
@@ -69,7 +88,6 @@ export const createCourse = async (req, res) => {
       day,
       startTime,
       endTime,
-      status,
       professor: req.user._id
     });
 

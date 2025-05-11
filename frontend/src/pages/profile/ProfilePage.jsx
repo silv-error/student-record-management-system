@@ -4,20 +4,21 @@ import styles from "../../styles/Profile.module.css"
 import { useState } from 'react'
 import { useAuthContext } from '../../context/authContext'
 import LoadingSpinner from '../../components/LoadingSpinner'
-import useUpdateProfile from '../hooks/useUpdateProfile'
+import useUpdateProfile from '../../hooks/useUpdateProfile'
 import { formattedBirthDate } from '../utils/date'
 import { Pencil } from 'lucide-react'
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { toTitleFormat } from '../utils/text'
 
 const ProfilePage = () => {
 
   const [editMode, setEditMode] = useState(true);
-  
+
   const [profileImg, setProfileImg] = useState(null);
   const imgRef = useRef(null);
-  const {mutateAsync, isPending} = useUpdateProfile();
-  
+  const { mutateAsync, isPending } = useUpdateProfile();
+
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -31,13 +32,13 @@ const ProfilePage = () => {
       reader.readAsDataURL(file);
     }
   };
-  
+
   useEffect(() => {
     return () => {
       setEditMode(false);
     }
   }, []);
-  
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -54,7 +55,7 @@ const ProfilePage = () => {
     course: "",
     yearLevel: "",
   });
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     await mutateAsync(formData);
@@ -66,14 +67,14 @@ const ProfilePage = () => {
   }
 
   const { id } = useParams();
-  const {data:authUser, isLoading} = useQuery({
+  const { data: profile, isLoading, isRefetching, refetch } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
       try {
         const res = await fetch(`/api/users/profile/${id}`);
         const data = await res.json();
 
-        if(!res.ok) {
+        if (!res.ok) {
           throw new Error(data.error || "Something went wrong");
         }
 
@@ -83,11 +84,18 @@ const ProfilePage = () => {
       }
     }
   });
+  
+  useEffect(() => {
+    refetch();
+  }, [id, refetch])
 
-  if(isLoading) {
+  const { authUser } = useAuthContext();
+  const myProfile = authUser?._id === id;
+
+  if (isLoading || isRefetching) {
     return (
-      <div className='h-full flex justify-center items-center'>
-        <LoadingSpinner size={50}/>
+      <div className='relative inset-0 h-full flex justify-center items-center'>
+        <LoadingSpinner size={50} />
       </div>
     )
   }
@@ -103,22 +111,28 @@ const ProfilePage = () => {
             {/* <!-- Profile Picture centered on cover --> */}
             <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-10">
               <div className='relative group'>
-                <div 
-                  className='absolute w-full h-full rounded-full bg-black opacity-0 group-hover:opacity-35'
-                  onClick={() => imgRef.current.click()}
-                />
-                <img 
-                  src={profileImg || authUser?.profileImg || "https://avatar.iran.liara.run/public/30"}
+                {myProfile && (
+                  <div
+                    className='absolute w-full h-full rounded-full bg-black opacity-0 group-hover:opacity-35'
+                    onClick={() => imgRef.current.click()}
+                  />
+                )}
+                <img
+                  src={profileImg || profile?.profileImg || "https://avatar.iran.liara.run/public/30"}
                   alt="Profile Picture"
-                  className={`border-4 border-white ${styles.profilePicc} rounded-full object-cover size-40 bg-gray-900`} 
+                  className={`border-4 border-white ${styles.profilePicc} rounded-full object-cover size-40 bg-gray-900`}
                 />
-                <Pencil size={30} className='absolute hidden group-hover:block top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-white'/>
+                {myProfile && (
+                  <Pencil size={30} className='absolute hidden group-hover:block top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-white' />
+                )}
               </div>
-              
-              <input ref={imgRef} type='file' accept='image/*' onChange={handleImageChange} hidden/>
-              <h2 className="text-white text-2xl font-bold mt-2 mb-2 text-center">{authUser?.firstName} {authUser?.middleName} {authUser?.lastName} </h2>
-              <p className='font-medium text-yellow-500'>{authUser?.role} </p>
-              <p className="text-blue-300 mb-10 text-center">{authUser?.course}</p>
+
+              <input ref={imgRef} type='file' accept='image/*' onChange={handleImageChange} hidden />
+              <h2 className="text-white text-2xl font-bold mt-2 mb-2 text-center">
+                {toTitleFormat(`${profile?.firstName} ${profile?.middleName} ${profile?.lastName}`)}
+              </h2>
+              <p className='font-medium text-yellow-500'>{profile?.role} </p>
+              <p className="text-blue-300 mb-10 text-center">{toTitleFormat(profile?.course)}</p>
             </div>
           </div>
           {/* <!-- Personal Information Section with Edit --> */}
@@ -132,22 +146,24 @@ const ProfilePage = () => {
                 >
                   <span id={styles.personalInfoText} className="active-underline">Personal Info</span>
                 </button>
-                <button
-                  onClick={() => setEditMode(true)} 
-                  className={`${editMode && "border-b-2 border-blue-600"} text-xl font-semibold text-gray-800 px-4 py-2`}
-                >
-                  Edit
-                </button>
+                {myProfile && (
+                  <button
+                    onClick={() => setEditMode(true)}
+                    className={`${editMode && "border-b-2 border-blue-600"} text-xl font-semibold text-gray-800 px-4 py-2`}
+                  >
+                    Edit
+                  </button>
+                )}
               </div>
               {(editMode || profileImg) && (
                 <div className="flex ml-auto space-x-4 right-0 relative">
                   {(
-                    <button 
-                      type="button" id="saveBtn" 
+                    <button
+                      type="button" id="saveBtn"
                       onClick={handleSubmit}
                       className=" bg-blue-600 hover:bg-blue-700 w-40 text-white font-medium py-2 px-6 rounded-lg"
                     >
-                      {isPending ? (
+                      {(isPending && authUser) ? (
                         <>
                           <div className='flex justify-center items-center gap-2'>
                             <LoadingSpinner size={20} /> {`Loading`}
@@ -161,7 +177,9 @@ const ProfilePage = () => {
             </div>
             {!editMode && (
               <div>
-                <h2 className="text-2xl font-semibold text-blue-800 mt-5 mb-5 px-4 md:px-10 py-1">Personal Info</h2>
+                <h2 className="text-2xl font-semibold text-blue-800 mt-5 mb-5 px-4 md:px-10 py-1">
+                  Personal Info
+                </h2>
               </div>
             )}
             {/* <!-- View Mode --> */}
@@ -175,7 +193,7 @@ const ProfilePage = () => {
                       </svg>
                       <div>
                         <p className="text-gray-500 text-sm">Gender</p>
-                        <p className="text-gray-800 text-lg">{authUser?.gender}</p>
+                        <p className="text-gray-800 text-lg">{profile?.gender}</p>
                       </div>
                     </div>
 
@@ -185,7 +203,7 @@ const ProfilePage = () => {
                       </svg>
                       <div>
                         <p className="text-gray-500 text-sm">Date of Birth</p>
-                        <p className="text-gray-800 text-lg">{formattedBirthDate(authUser?.dateOfBirth)} </p>
+                        <p className="text-gray-800 text-lg">{formattedBirthDate(profile?.dateOfBirth)} </p>
                       </div>
                     </div>
 
@@ -195,7 +213,7 @@ const ProfilePage = () => {
                       </svg>
                       <div>
                         <p className="text-gray-500 text-sm">Email</p>
-                        <p className="text-gray-800 text-lg">{authUser?.email}</p>
+                        <p className="text-gray-800 text-lg">{profile?.email}</p>
                       </div>
                     </div>
                   </div>
@@ -207,7 +225,7 @@ const ProfilePage = () => {
                       </svg>
                       <div>
                         <p className="text-gray-500 text-sm">Student ID</p>
-                        <p className="text-gray-800 text-lg">{authUser?._id}</p>
+                        <p className="text-gray-800 text-lg">{profile?._id}</p>
                       </div>
                     </div>
 
@@ -217,7 +235,7 @@ const ProfilePage = () => {
                       </svg>
                       <div>
                         <p className="text-gray-500 text-sm">Phone</p>
-                        <p className="text-gray-800 text-lg">{authUser?.contactNumber}</p>
+                        <p className="text-gray-800 text-lg">{profile?.contactNumber}</p>
                       </div>
                     </div>
 
@@ -228,7 +246,7 @@ const ProfilePage = () => {
                       </svg>
                       <div>
                         <p className="text-gray-500 text-sm">Address</p>
-                        <p className="text-gray-800 text-lg">{authUser?.address?.country}</p>
+                        <p className="text-gray-800 text-lg">{profile?.address?.country}</p>
                       </div>
                     </div>
                   </div>

@@ -6,6 +6,9 @@ export const editStudentGrade = async (req, res) => {
     const { courseId, studentId } = req.params;
     const { grade } = req.body;
 
+    if(grade > 100 || grade < 0) {
+      return res.status(400).json({ success: false, error: "Invalid grade" });
+    }
     const student = await User.findById(studentId).lean();
     if(!student) {
       return res.status(404).json({ success: false, error: "Student not found" });
